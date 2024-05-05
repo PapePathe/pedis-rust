@@ -1,15 +1,15 @@
 use std::{rc::Rc, sync::Arc, sync::RwLock};
 
-pub mod config_handler;
+pub mod handler_config;
+pub mod handler_set;
 pub mod redis_command;
 pub mod redis_store;
-pub mod set_handler;
 
 // Defines the behaviour of the redis command handlers
 pub trait RedisCommandHandler {
     fn exec(
         &self,
-        s: Arc<RwLock<&mut (dyn redis_store::IStore + Send + Sync)>>,
-        cmd: Rc<redis_command::RedisCommand>,
+        _: Arc<RwLock<&mut (dyn redis_store::IStore + Send + Sync)>>,
+        _: Rc<redis_command::RedisCommand>,
     ) -> String;
 }
