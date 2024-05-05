@@ -6,7 +6,7 @@ use std::{sync::Arc, sync::RwLock};
 
 pub struct ConfigHandler {}
 impl RedisCommandHandler for ConfigHandler {
-    fn exec(&self, _: Arc<RwLock<&mut dyn IStore>>, _: Rc<RedisCommand>) -> String {
+    fn exec(&self, _: Arc<RwLock<&mut (dyn IStore + Send + Sync)>>, _: Rc<RedisCommand>) -> String {
         "+OK".to_string()
     }
 }

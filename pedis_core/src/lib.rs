@@ -9,7 +9,7 @@ pub mod set_handler;
 pub trait RedisCommandHandler {
     fn exec(
         &self,
-        s: Arc<RwLock<&mut dyn redis_store::IStore>>,
+        s: Arc<RwLock<&mut (dyn redis_store::IStore + Send + Sync)>>,
         cmd: Rc<redis_command::RedisCommand>,
     ) -> String;
 }

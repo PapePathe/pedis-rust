@@ -7,7 +7,6 @@ pub trait IStore {
     fn get(&self, k: String, vk: ValueKind) -> Result<&Value, KeyNotFoundError>; 
 }
 
-
 #[derive(Default)]
 pub struct RedisStore {
     store: HashMap<String, Value>,
