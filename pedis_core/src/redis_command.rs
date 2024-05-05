@@ -5,7 +5,7 @@ pub struct RedisCommand<'a> {
 
 impl<'a> RedisCommand<'a> {
     pub fn new(cmd: &'a str) -> Self {
-       Self { cmd }
+        Self { cmd }
     }
     pub fn params(&self) -> Vec<String> {
         let mut args: Vec<String> = vec![];
@@ -30,15 +30,13 @@ mod tests {
 
     #[test]
     fn test_args() {
-        let c =
-            RedisCommand::new("*3\r\n$3\r\nSET\r\n$3\r\nkey\r\n$11\r\nHello World\r\n");
+        let c = RedisCommand::new("*3\r\n$3\r\nSET\r\n$3\r\nkey\r\n$11\r\nHello World\r\n");
         assert_eq!(vec!["SET", "key", "Hello World"], c.params());
     }
 
     #[test]
     fn test_name() {
-        let c =
-            RedisCommand::new("*3\r\n$3\r\nSET\r\n$3\r\nkey\r\n$11\r\nHello World\r\n");
+        let c = RedisCommand::new("*3\r\n$3\r\nSET\r\n$3\r\nkey\r\n$11\r\nHello World\r\n");
         assert_eq!("set", c.name());
     }
 }
