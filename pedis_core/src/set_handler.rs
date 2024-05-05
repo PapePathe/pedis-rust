@@ -15,8 +15,10 @@ impl RedisCommandHandler for SetHandler {
         let params = cmd.params().clone();
         let value = Value::new_string(params[2].as_bytes().to_vec());
         let mut s = ss.write().unwrap();
-        let _ = s.set(params[1].to_string(), value);
-        "+OK".to_string()
+        match s.set(params[1].to_string(), value) {
+            Result::Ok(_) => "+OK".to_string(),
+            Result::Err(e) => e.to_string(),
+        }
     }
 }
 
@@ -28,9 +30,9 @@ mod test {
     use std::{sync::Arc, sync::RwLock};
 
     #[test]
-    fn test_set_exec() {
+    fn test_set_handler_exec() {
         let h = SetHandler {};
-        let mut s = Teststore {};
+        let mut s = Teststore { err: false };
         let cmd =
             RedisCommand::new("*3\r\n$3\r\nSET\r\n$3\r\nkey\r\n$11\r\nHello World\r\n".to_string());
 
@@ -38,20 +40,36 @@ mod test {
         assert_eq!(result, "+OK".to_string())
     }
 
-    struct Teststore {}
+    #[test]
+    fn test_set_handler_exec_with_store_error() {
+        let h = SetHandler {};
+        let mut s = Teststore { err: true };
+        let cmd =
+            RedisCommand::new("*3\r\n$3\r\nSET\r\n$3\r\nkey\r\n$11\r\nHello World\r\n".to_string());
+
+        let result = h.exec(Arc::new(RwLock::new(&mut s)), cmd.into());
+        assert_eq!(result, "-ERR key not found".to_string())
+    }
+
+    struct Teststore {
+        err: bool,
+    }
     impl IStore for Teststore {
         fn set(
             &mut self,
             _: String,
             _: crate::redis_store::Value,
-        ) -> Result<(), crate::redis_store::KeyNotFoundError> {
+        ) -> Result<(), crate::redis_store::StoreError> {
+            if self.err {
+                return Err(crate::redis_store::StoreError::KeyNotFoundError);
+            }
             Ok(())
         }
         fn get(
             &self,
             _: String,
             _: crate::redis_store::ValueKind,
-        ) -> Result<&crate::redis_store::Value, crate::redis_store::KeyNotFoundError> {
+        ) -> Result<&crate::redis_store::Value, crate::redis_store::StoreError> {
             todo!()
         }
     }

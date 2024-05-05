@@ -1,7 +1,7 @@
 #[derive(Debug)]
 pub struct RedisCommand {
     cmd: String,
-    args: Vec<String>
+    args: Vec<String>,
 }
 
 impl RedisCommand {
@@ -14,7 +14,7 @@ impl RedisCommand {
             }
             args.push(pat.to_string())
         }
-        Self { cmd , args}
+        Self { cmd, args }
     }
     pub fn params(&self) -> Vec<String> {
         let mut args: Vec<String> = vec![];
