@@ -1,0 +1,9 @@
+[package]
+name = "pedis"
+version = "0.1.0"
+edition = "2021"
+
+[dependencies]
+redis = "0.25.3"
+pedis_core = { path = "../pedis_core" }
+regex = "1.10.4"
