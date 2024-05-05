@@ -1,11 +1,11 @@
 extern crate redis;
-use redis::Commands;
-use pedis_core::redis_command::RedisCommand;
-use std::rc::Rc;
-use std::sync::{Arc,  RwLock};
-use std::{collections::HashMap, thread, net::TcpStream, net::TcpListener};
 use core::time::Duration;
+use pedis_core::redis_command::RedisCommand;
+use redis::Commands;
 use std::io::{Read, Write};
+use std::rc::Rc;
+use std::sync::{Arc, RwLock};
+use std::{collections::HashMap, net::TcpListener, net::TcpStream, thread};
 
 fn main() -> std::io::Result<()> {
     thread::spawn(|| {
@@ -26,8 +26,14 @@ fn main() -> std::io::Result<()> {
 
 fn handle_client(mut stream: TcpStream) {
     let mut commands: HashMap<String, Box<dyn pedis_core::RedisCommandHandler>> = HashMap::new();
-    commands.insert("config".to_string(), Box::new(pedis_core::config_handler::ConfigHandler {}));
-    commands.insert("set".to_string(), Box::new(pedis_core::set_handler::SetHandler {}));
+    commands.insert(
+        "config".to_string(),
+        Box::new(pedis_core::config_handler::ConfigHandler {}),
+    );
+    commands.insert(
+        "set".to_string(),
+        Box::new(pedis_core::set_handler::SetHandler {}),
+    );
 
     loop {
         let mut buffer = [0; 1024];
@@ -42,18 +48,17 @@ fn handle_client(mut stream: TcpStream) {
         for cmd in elems {
             eprintln!("DEBUG: {:?}", cmd);
 
-            if let Some(handler) = commands.get(&cmd.name())  {
+            if let Some(handler) = commands.get(&cmd.name()) {
                 let mut store = pedis_core::redis_store::RedisStore::default();
                 let result = handler.exec(Arc::new(RwLock::new(&mut store)), cmd);
                 let _ = stream.write(result.as_bytes());
-                continue
+                continue;
             }
 
             let _ = stream.write("-ERR command not found \r\n".as_bytes());
         }
     }
 }
-
 
 fn parse_command(cmd: &str) -> Vec<Rc<RedisCommand>> {
     let re = regex::Regex::new(r"\*\d*").unwrap();
@@ -66,7 +71,7 @@ fn parse_command(cmd: &str) -> Vec<Rc<RedisCommand>> {
     let mut cmds: Vec<Rc<RedisCommand>> = vec![];
     for cmd in elems.clone() {
         if cmd.is_empty() {
-            continue
+            continue;
         }
         cmds.push(Rc::new(RedisCommand::new(cmd.to_string())))
     }
