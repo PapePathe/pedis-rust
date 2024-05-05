@@ -27,28 +27,41 @@ mod test {
     use crate::{redis_command::RedisCommand, redis_store::IStore, RedisCommandHandler};
 
     use super::SetHandler;
-    use std::{sync::Arc, sync::RwLock};
+    use std::{rc::Rc, sync::Arc, sync::RwLock};
 
-    #[test]
-    fn test_set_handler_exec() {
-        let h = SetHandler {};
-        let mut s = Teststore { err: false };
-        let cmd =
-            RedisCommand::new("*3\r\n$3\r\nSET\r\n$3\r\nkey\r\n$11\r\nHello World\r\n".to_string());
-
-        let result = h.exec(Arc::new(RwLock::new(&mut s)), cmd.into());
-        assert_eq!(result, "+OK".to_string())
+    struct SetTestCase<'a> {
+        store_error: bool,
+        cmd: Rc<RedisCommand<'a>>,
+        result: String,
     }
 
     #[test]
-    fn test_set_handler_exec_with_store_error() {
-        let h = SetHandler {};
-        let mut s = Teststore { err: true };
-        let cmd =
-            RedisCommand::new("*3\r\n$3\r\nSET\r\n$3\r\nkey\r\n$11\r\nHello World\r\n".to_string());
+    fn test_set_handler_exec() {
+        let tests: Vec<Rc<SetTestCase>> = vec![
+            Rc::new(SetTestCase {
+                store_error: false,
+                cmd: Rc::new(RedisCommand::new(
+                    "*3\r\n$3\r\nSET\r\n$3\r\nkey\r\n$11\r\nHello World\r\n",
+                )),
+                result: "+OK".to_string(),
+            }),
+            Rc::new(SetTestCase {
+                store_error: true,
+                cmd: Rc::new(RedisCommand::new(
+                    "*3\r\n$3\r\nSET\r\n$3\r\nkey\r\n$11\r\nHello World\r\n",
+                )),
+                result: "-ERR key not found".to_string(),
+            }),
+        ];
 
-        let result = h.exec(Arc::new(RwLock::new(&mut s)), cmd.into());
-        assert_eq!(result, "-ERR key not found".to_string())
+        for test in tests {
+            let h = SetHandler {};
+            let mut s = Teststore {
+                err: test.store_error,
+            };
+            let result = h.exec(Arc::new(RwLock::new(&mut s)), test.cmd.clone());
+            assert_eq!(result, test.result)
+        }
     }
 
     struct Teststore {
