@@ -28,11 +28,11 @@ fn handle_client(mut stream: TcpStream) {
     let mut commands: HashMap<String, Box<dyn pedis_core::RedisCommandHandler>> = HashMap::new();
     commands.insert(
         "config".to_string(),
-        Box::new(pedis_core::config_handler::ConfigHandler {}),
+        Box::new(pedis_core::handler_config::ConfigHandler {}),
     );
     commands.insert(
         "set".to_string(),
-        Box::new(pedis_core::set_handler::SetHandler {}),
+        Box::new(pedis_core::handler_set::SetHandler {}),
     );
 
     loop {
@@ -65,7 +65,7 @@ fn parse_command(cmd: &str) -> Vec<Rc<RedisCommand>> {
     let elems: Vec<&str> = re.split(cmd).collect();
 
     if elems.is_empty() {
-        return vec![Rc::new(RedisCommand::new(cmd.to_string()))];
+        return vec![Rc::new(RedisCommand::new(cmd))];
     }
 
     let mut cmds: Vec<Rc<RedisCommand>> = vec![];
@@ -73,7 +73,7 @@ fn parse_command(cmd: &str) -> Vec<Rc<RedisCommand>> {
         if cmd.is_empty() {
             continue;
         }
-        cmds.push(Rc::new(RedisCommand::new(cmd.to_string())))
+        cmds.push(Rc::new(RedisCommand::new(cmd)))
     }
 
     cmds
