@@ -5,4 +5,5 @@ RUN cargo build --release
 
 FROM gcr.io/distroless/cc-debian12
 COPY --from=build-env /app/target/release/pedis /usr/bin/pedis
+EXPOSE 8379
 CMD ["pedis"]
