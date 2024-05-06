@@ -1,12 +1,15 @@
+/// Encapsulate a redis command
 #[derive(Debug, Copy, Clone)]
 pub struct RedisCommand<'a> {
     cmd: &'a str,
 }
 
 impl<'a> RedisCommand<'a> {
+    /// Initialize a new command from a resp string
     pub fn new(cmd: &'a str) -> Self {
         Self { cmd }
     }
+    /// Parses the command and returns a vector of strings
     pub fn params(&self) -> Vec<String> {
         let mut args: Vec<String> = vec![];
         let binding = self.cmd;
@@ -19,6 +22,7 @@ impl<'a> RedisCommand<'a> {
         }
         args.clone()
     }
+    /// Extracts the name of the command and returns it.
     pub fn name(&self) -> String {
         self.params()[0].clone().to_lowercase()
     }

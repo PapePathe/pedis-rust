@@ -1,17 +1,12 @@
 use crate::redis_command::RedisCommand;
-use crate::redis_store::{IStore, Value};
-use crate::RedisCommandHandler;
+use crate::redis_store::Value;
+use crate::{AsyncLockedStore, RedisCommandHandler};
 use std::rc::Rc;
-use std::sync::Arc;
-use std::sync::RwLock;
 
+/// Handles the SET command
 pub struct SetHandler {}
 impl RedisCommandHandler for SetHandler {
-    fn exec(
-        &self,
-        ss: Arc<RwLock<&mut (dyn IStore + Send + Sync)>>,
-        cmd: Rc<RedisCommand>,
-    ) -> String {
+    fn exec(&self, ss: AsyncLockedStore, cmd: Rc<RedisCommand>) -> String {
         let params = cmd.params().clone();
         let value = Value::new_string(params[2].as_bytes().to_vec());
         let mut s = ss.write().unwrap();
