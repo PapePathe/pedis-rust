@@ -26,7 +26,7 @@ impl PedisServer {
             HashMap::new();
         commands.insert(
             "config".to_string(),
-            Box::new(pedis_core_handlers::handler_config::ConfigHandler{}),
+            Box::new(pedis_core_handlers::handler_config::ConfigHandler {}),
         );
         commands.insert(
             "set".to_string(),

@@ -19,7 +19,7 @@ impl RedisCommandHandler for SetHandler {
 
 #[cfg(test)]
 mod test {
-    use pedis_core::{RedisCommand, IStore, RedisCommandHandler, StoreError, ValueKind, Value};
+    use pedis_core::{IStore, RedisCommand, RedisCommandHandler, StoreError, Value, ValueKind};
 
     use super::SetHandler;
     use std::{rc::Rc, sync::Arc, sync::RwLock};
@@ -63,21 +63,13 @@ mod test {
         err: bool,
     }
     impl IStore for Teststore {
-        fn set(
-            &mut self,
-            _: String,
-            _: Value,
-        ) -> Result<(), StoreError> {
+        fn set(&mut self, _: String, _: Value) -> Result<(), StoreError> {
             if self.err {
                 return Err(StoreError::KeyNotFoundError);
             }
             Ok(())
         }
-        fn get(
-            &self,
-            _: String,
-            _: ValueKind,
-        ) -> Result<&Value, StoreError> {
+        fn get(&self, _: String, _: ValueKind) -> Result<&Value, StoreError> {
             todo!()
         }
     }
