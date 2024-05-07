@@ -1,11 +1,7 @@
-extern crate redis;
-use core::time::Duration;
 use pedis_core::redis_command::RedisCommand;
-use redis::Commands;
-use std::io::{Read, Write};
 use std::rc::Rc;
 use std::sync::{Arc, RwLock};
-use std::{collections::HashMap, net::TcpListener, net::TcpStream, thread};
+use std::{collections::HashMap, net::TcpListener, net::TcpStream};
 
 struct PedisServer {
     addr: String,
@@ -80,15 +76,6 @@ impl PedisServer {
 }
 
 fn main() -> std::io::Result<()> {
-    thread::spawn(|| {
-        thread::sleep(Duration::from_millis(1000));
-        let mut client = redis::Client::open("redis://127.0.0.1:8379")
-            .expect("something went wrong connecting to pedis");
-        let result: () = client
-            .set("key", "Hello World")
-            .expect("something went wrong running set command");
-        println!("{:?}", result);
-    });
-    let server = PedisServer::new("127.0.0.1:8379".to_string());
+   let server = PedisServer::new("127.0.0.1:8379".to_string());
     server.start()
 }

@@ -1,6 +1,6 @@
-use crate::redis_command::RedisCommand;
-use crate::redis_store::Value;
-use crate::{AsyncLockedStore, RedisCommandHandler};
+use pedis_core::RedisCommand;
+use pedis_core::Value;
+use pedis_core::{AsyncLockedStore, RedisCommandHandler};
 use std::rc::Rc;
 
 /// Handles the SET command
@@ -19,7 +19,7 @@ impl RedisCommandHandler for SetHandler {
 
 #[cfg(test)]
 mod test {
-    use crate::{redis_command::RedisCommand, redis_store::IStore, RedisCommandHandler};
+    use pedis_core::{RedisCommand, IStore, RedisCommandHandler, StoreError, ValueKind, Value};
 
     use super::SetHandler;
     use std::{rc::Rc, sync::Arc, sync::RwLock};
@@ -66,18 +66,18 @@ mod test {
         fn set(
             &mut self,
             _: String,
-            _: crate::redis_store::Value,
-        ) -> Result<(), crate::redis_store::StoreError> {
+            _: Value,
+        ) -> Result<(), StoreError> {
             if self.err {
-                return Err(crate::redis_store::StoreError::KeyNotFoundError);
+                return Err(StoreError::KeyNotFoundError);
             }
             Ok(())
         }
         fn get(
             &self,
             _: String,
-            _: crate::redis_store::ValueKind,
-        ) -> Result<&crate::redis_store::Value, crate::redis_store::StoreError> {
+            _: ValueKind,
+        ) -> Result<&Value, StoreError> {
             todo!()
         }
     }

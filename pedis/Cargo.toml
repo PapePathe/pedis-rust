@@ -4,6 +4,6 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
+pedis-core = "0.0.1"
 redis = "0.25.3"
-pedis_core = { path = "../pedis_core" }
 regex = "1.10.4"

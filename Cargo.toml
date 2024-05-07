@@ -1,5 +1,5 @@
 [workspace]
 
 members = [
-  "pedis", "pedis_core",
+  "pedis", "pedis_core_handlers",
 ]

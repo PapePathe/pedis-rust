@@ -68,14 +68,29 @@ checksum = "6c8640c5d730cb13ebd907d8d04b52f55ac9a2eec55b440c8892f40d56c76c1d"
 name = "pedis"
 version = "0.1.0"
 dependencies = [
- "pedis_core",
+ "pedis-core 0.0.1",
  "redis",
  "regex",
 ]
 
 [[package]]
-name = "pedis_core"
+name = "pedis-core"
+version = "0.0.1"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "d0055dbee3e9abf18cc04c56d45fe3bcd6506e81c50fdce9863ed6c3892595cd"
+
+[[package]]
+name = "pedis-core"
+version = "0.0.2"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "bd079ed30bcd1573197c3780d29adb0f3a3cc8469703820bac40dd066128272c"
+
+[[package]]
+name = "pedis_core_handlers"
 version = "0.1.0"
+dependencies = [
+ "pedis-core 0.0.2",
+]
 
 [[package]]
 name = "percent-encoding"
