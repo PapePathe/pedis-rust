@@ -1,5 +1,4 @@
-use crate::redis_command::RedisCommand;
-use crate::{AsyncLockedStore, RedisCommandHandler};
+use pedis_core::{AsyncLockedStore, RedisCommand, RedisCommandHandler};
 use std::rc::Rc;
 
 /// Handles the CONFIG command
@@ -12,7 +11,8 @@ impl RedisCommandHandler for ConfigHandler {
 
 #[cfg(test)]
 mod test {
-    use crate::{handler_config::ConfigHandler, redis_command::RedisCommand, RedisCommandHandler};
+    use crate::handler_config::ConfigHandler;
+    use pedis_core::{RedisCommand, RedisCommandHandler, Teststore};
     use std::rc::Rc;
     use std::sync::Arc;
     use std::sync::RwLock;
@@ -44,7 +44,7 @@ mod test {
 
         for test in tests {
             let h = ConfigHandler {};
-            let mut s = crate::redis_store::Teststore {
+            let mut s = Teststore {
                 err: test.store_error,
             };
             let result = h.exec(Arc::new(RwLock::new(&mut s)), test.cmd.clone());
