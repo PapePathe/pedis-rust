@@ -1,4 +1,6 @@
-use pedis_core::redis_command::RedisCommand;
+use pedis_core::RedisCommand;
+use std::io::Read;
+use std::io::Write;
 use std::rc::Rc;
 use std::sync::{Arc, RwLock};
 use std::{collections::HashMap, net::TcpListener, net::TcpStream};
@@ -24,11 +26,11 @@ impl PedisServer {
             HashMap::new();
         commands.insert(
             "config".to_string(),
-            Box::new(pedis_core::handler_config::ConfigHandler {}),
+            Box::new(pedis_core_handlers::handler_config::ConfigHandler{}),
         );
         commands.insert(
             "set".to_string(),
-            Box::new(pedis_core::handler_set::SetHandler {}),
+            Box::new(pedis_core_handlers::handler_set::SetHandler {}),
         );
 
         loop {
@@ -45,7 +47,7 @@ impl PedisServer {
                 eprintln!("DEBUG: {:?}", cmd);
 
                 if let Some(handler) = commands.get(&cmd.name()) {
-                    let mut store = pedis_core::redis_store::RedisStore::default();
+                    let mut store = pedis_core::RedisStore::default();
                     let result = handler.exec(Arc::new(RwLock::new(&mut store)), cmd);
                     let _ = stream.write(result.as_bytes());
                     continue;
@@ -76,6 +78,6 @@ impl PedisServer {
 }
 
 fn main() -> std::io::Result<()> {
-   let server = PedisServer::new("127.0.0.1:8379".to_string());
+    let server = PedisServer::new("127.0.0.1:8379".to_string());
     server.start()
 }

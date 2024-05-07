@@ -4,4 +4,4 @@ version = "0.1.0"
 edition = "2021"
 
 [dependencies]
-pedis-core = "0.0.2"
+pedis-core = "0.0.3"
